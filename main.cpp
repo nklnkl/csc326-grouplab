@@ -22,21 +22,35 @@ void test (Sequence & sequence, int repeat, int order, bool average);
 // Returns amount of elements to be worked on based on table row.
 int getN (int row);
 
+// Prints a fixed table.
+void printTableInt (int table [][5], int repeat);
+void printTableFloat (float table [][5], int repeat);
+
+// Print width for table display.
+int printW = 12;
+
 
 int main () {
   Sequence sequence;
 
   // Single Instance - Sorted
-  test (sequence, 50, 0, false);
+  cout << "Single Instance - Sorted" << endl;
+  test (sequence, 1, 0, false);
   // Single Instance - Reverse
-  test (sequence, 50, 1, false);
+  cout << "Single Instance - Reverse" << endl;
+  test (sequence, 1, 1, false);
   // Single Instance - Random
-  test (sequence, 50, 2, false);
+  cout << "Single Instance - Random" << endl;
+  test (sequence, 1, 2, false);
+
+  cout << "Multiple Instance - Random" << endl;
+  // Multiple instance - Random
+  test (sequence, 50, 2, true);
 
   return 0;
 }
 
-void test (Sequence & sequence, int repeat, int order) {
+void test (Sequence & sequence, int repeat, int order, bool average) {
 
   // The object to sort the sequence.
   Sort sort;
@@ -49,9 +63,6 @@ void test (Sequence & sequence, int repeat, int order) {
   // Arrays to hold values for printing.
   int stepsTable [8][5];
   float timeTable [8][5];
-
-  // Print width
-  int printW = 12;
 
   // Loop through rows.
   for (int i = 0; i < 8; i++) {
@@ -126,87 +137,25 @@ void test (Sequence & sequence, int repeat, int order) {
     }
   }
 
-  // Print step table headers. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Print step table. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   cout << "Steps (Assignments, swaps, and comparions)" << endl;
-  cout << left << setw(printW) << "." << "\t";
-  for (int i = 0; i < 5; i++) {
-    switch (i) {
-      case 0:
-        cout << left << setw(printW) << "insertion" << "\t";
-        break;
-      case 1:
-        cout << left << setw(printW) << "selection" << "\t";
-        break;
-      case 2:
-        cout << left << setw(printW) << "bubble" << "\t";
-        break;
-      case 3:
-        cout << left << setw(printW) << "merge" << "\t";
-        break;
-      case 4:
-        cout << left << setw(printW) << "quick" << "\t";
-        break;
-    }
-  }
-  cout << endl;
+  printTableInt (stepsTable, 1);
 
-  // Print  step table values. Loop through rows.
-  for (int i = 0; i < 8; i++) {
-    // Get row info.
-    int n = getN (i);
-    // Print row info.
-    cout << left << setw(printW) << n << "\t";
-    // Loop through columns.
-    for (int j = 0; j < 5; j++) {
-      cout << left << setw(printW) << stepsTable [i][j] << "\t";
-    }
-    // End of row.
-    cout << endl;
-  }
-
-  // End of step table.
-  cout << endl << endl;
-
-  // Print time table headers. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Print time table. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   cout << "Time in seconds." << endl;
-  cout << left << setw(printW) << "." << "\t";
-  for (int i = 0; i < 5; i++) {
-    switch (i) {
-      case 0:
-        cout << left << setw(printW) << "insertion" << "\t";
-        break;
-      case 1:
-        cout << left << setw(printW) << "selection" << "\t";
-        break;
-      case 2:
-        cout << left << setw(printW) << "bubble" << "\t";
-        break;
-      case 3:
-        cout << left << setw(printW) << "merge" << "\t";
-        break;
-      case 4:
-        cout << left << setw(printW) << "quick" << "\t";
-        break;
-    }
-  }
-  cout << endl;
+  printTableFloat (timeTable, 1);
 
-  // Print  time table values. Loop through rows.
-  for (int i = 0; i < 8; i++) {
-    // Get row info.
-    int n = getN (i);
-    // Print row info.
-    cout << left << setw(printW) << n << "\t";
-    // Loop through columns.
-    for (int j = 0; j < 5; j++) {
-      cout << left << setw(printW) << fixed << timeTable [i][j] << "\t";
-    }
-    // End of row.
-    cout << endl;
-  }
+  // If the average was to be printed. Usuallly for multiple repeated instances.
+  if (average) {
+    cout << "AVERAGES" << endl;
+    // Print step table. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    cout << "Steps (Assignments, swaps, and comparions)" << endl;
+    printTableInt (stepsTable, repeat);
 
-  // End of step table.
-  cout << endl << endl;
+    // Print time table. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    cout << "Time in seconds." << endl;
+    printTableFloat (timeTable, repeat);
+  }
 }
 
 int getN (int row) {
@@ -236,4 +185,86 @@ int getN (int row) {
       return 4000;
       break;
   }
+}
+
+void printTableInt (int table [][5], int repeat) {
+  cout << left << setw(printW) << "." << "\t";
+  for (int i = 0; i < 5; i++) {
+    switch (i) {
+      case 0:
+        cout << left << setw(printW) << "insertion" << "\t";
+        break;
+      case 1:
+        cout << left << setw(printW) << "selection" << "\t";
+        break;
+      case 2:
+        cout << left << setw(printW) << "bubble" << "\t";
+        break;
+      case 3:
+        cout << left << setw(printW) << "merge" << "\t";
+        break;
+      case 4:
+        cout << left << setw(printW) << "quick" << "\t";
+        break;
+    }
+  }
+  cout << endl;
+
+  // Print time table values. Loop through rows.
+  for (int i = 0; i < 8; i++) {
+    // Get row info.
+    int n = getN (i);
+    // Print row info.
+    cout << left << setw(printW) << n << "\t";
+    // Loop through columns.
+    for (int j = 0; j < 5; j++) {
+      cout << left << setw(printW) << fixed << table [i][j] / repeat << "\t";
+    }
+    // End of row.
+    cout << endl;
+  }
+
+  // End of step table.
+  cout << endl << endl;
+}
+
+void printTableFloat (float table [][5], int repeat) {
+  cout << left << setw(printW) << "." << "\t";
+  for (int i = 0; i < 5; i++) {
+    switch (i) {
+      case 0:
+        cout << left << setw(printW) << "insertion" << "\t";
+        break;
+      case 1:
+        cout << left << setw(printW) << "selection" << "\t";
+        break;
+      case 2:
+        cout << left << setw(printW) << "bubble" << "\t";
+        break;
+      case 3:
+        cout << left << setw(printW) << "merge" << "\t";
+        break;
+      case 4:
+        cout << left << setw(printW) << "quick" << "\t";
+        break;
+    }
+  }
+  cout << endl;
+
+  // Print time table values. Loop through rows.
+  for (int i = 0; i < 8; i++) {
+    // Get row info.
+    int n = getN (i);
+    // Print row info.
+    cout << left << setw(printW) << n << "\t";
+    // Loop through columns.
+    for (int j = 0; j < 5; j++) {
+      cout << left << setw(printW) << fixed << table [i][j] / repeat << "\t";
+    }
+    // End of row.
+    cout << endl;
+  }
+
+  // End of step table.
+  cout << endl << endl;
 }
