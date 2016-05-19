@@ -3,16 +3,20 @@
 Sort::Sort () {}
 Sort::~Sort () {}
 
-void Sort::insertion (int * arr, int length, int repeat, int & steps) const {
+void Sort::insertion (int * arr, int length, int & steps) const {
 
   int j, temp;
 
+  // Increment steps for int i = 0;
+  steps += 1;
   // Loop through the array until length is reached.
   for (int i = 0; i < length; i++) {
 
     // Increment steps for i < length. +1
     steps += 1;
 
+    // Increment steps for j = i;
+    steps += 1;
     // Set the current to be checked element.
     j = i;
 
@@ -33,10 +37,12 @@ void Sort::insertion (int * arr, int length, int repeat, int & steps) const {
   return;
 }
 
-void Sort::selection (int * arr, int length, int repeat, int & steps) const {
+void Sort::selection (int * arr, int length, int & steps) const {
 
   int highest, temp;
 
+  // Increment steps for int i = 0;
+  steps += 1;
   for (int i = 0; i < length; i++) {
 
     // Increment steps for i < length comparison. +1
@@ -44,6 +50,8 @@ void Sort::selection (int * arr, int length, int repeat, int & steps) const {
 
     highest = 0;
 
+    // Increment steps for int j = 0;
+    steps += 1;
     for (int j = 0; j < length - i; j++) {
 
       // Increment steps for j < length - i. +1
@@ -68,15 +76,19 @@ void Sort::selection (int * arr, int length, int repeat, int & steps) const {
   }
 }
 
-void Sort::bubble (int * arr, int length, int repeat, int & steps) const {
+void Sort::bubble (int * arr, int length, int & steps) const {
   int temp;
 
+  // Increment steps for int i = 0;
+  steps += 1;
   // Make n amount of passes.
   for (int i = 0; i < length; i++ ) {
 
     // Increment steps for i < length comparisons.
     steps += 1;
 
+    // Increment steps for int j = 0;
+    steps += 1;
     // Loop through the current sequence minus the amount of passes made.
     for (int j = 0; j < length - i - 1; j++) {
 
@@ -99,14 +111,14 @@ void Sort::bubble (int * arr, int length, int repeat, int & steps) const {
   }
 }
 
-void Sort::merge (int * arr, int length, int repeat, int & steps) {
+void Sort::merge (int * arr, int length, int & steps) {
   // Increment steps for if comparison.
   steps += 1;
   if (length == 1) return;
   int size1 = length/2, size2 = length-size1;
 
-  merge(arr, size1, repeat, steps);
-  merge(arr+size1, size2, repeat, steps);
+  merge(arr, size1, steps);
+  merge(arr+size1, size2, steps);
   mergeStep(arr, size1, size2, steps);
   return;
 }
@@ -141,14 +153,14 @@ void Sort::mergeStep (int * arr, int n1, int n2, int & steps) {
   return;
 }
 
-void Sort::quick (int * arr, int start, int length, int repeat, int & steps) {
+void Sort::quick (int * arr, int start, int length, int & steps) {
   int part;
   // Increment steps for if comparion. +1
   steps += 1;
 	if(start < length) {
 		part = partitionStep(arr, 0, length, steps);
-		quick(arr, start, part-1, repeat, steps);
-		quick(arr, part+1, length, repeat, steps);
+		quick(arr, start, part-1, steps);
+		quick(arr, part+1, length, steps);
 	}
 }
 

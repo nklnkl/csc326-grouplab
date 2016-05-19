@@ -2,156 +2,238 @@
 #include "sequence.cpp"
 #include <iostream>
 #include <time.h>
+#include <iomanip>
 
 using namespace std;
 
-void printArray (int * a, int n);
-void setSequence (Sequence & mySequence);
-void setPreorder (Sequence & mySequence);
-void sort (Sequence & mySequence);
+/*
+  void test()
+  sequence: the data set to be worked on.
+  repeat: how many times this test will run.
+  order: {
+    0: Sorted
+    1: Reverse
+    2: Random
+  }
+  average: if the test will be printing average values as well.
+*/
+void test (Sequence & sequence, int repeat, int order, bool average);
+
+// Returns amount of elements to be worked on based on table row.
+int getN (int row);
+
 
 int main () {
+  Sequence sequence;
 
-  // Initialize data set object.
-  Sequence mySequence;
-  mySequence.initialize(100);
-
-  int input = 1;
-
-  // Loop for user input.
-  while ( input != 0) {
-    cout << endl << endl;
-    cout << "CSC 326 - Group Lab" << endl;
-    cout << "0) Exit." << endl;
-    cout << "1) Set Sequence." << endl;
-    cout << "2) Pre order sequence." << endl;
-    cout << "3) Sort." << endl;
-    cout << "$: ";
-    cin >> input;
-    switch (input) {
-      case 0:
-        break;
-      case 1:
-        setSequence(mySequence);
-        break;
-      case 2:
-        setPreorder(mySequence);
-        break;
-      case 3:
-        sort(mySequence);
-        break;
-    }
-  }
+  // Single Instance - Sorted
+  test (sequence, 50, 0, false);
+  // Single Instance - Reverse
+  test (sequence, 50, 1, false);
+  // Single Instance - Random
+  test (sequence, 50, 2, false);
 
   return 0;
 }
 
-void sort (Sequence & mySequence) {
-  Sort mySort;
-  int method, repeat;
+void test (Sequence & sequence, int repeat, int order) {
 
+  // The object to sort the sequence.
+  Sort sort;
+
+  // Data to keep track of steps and time.
   clock_t time1, time2, timeD;
-  float time = 0;
-  int steps = 0;
+  float time;
+  int steps;
 
-  cout << endl << endl;
-  cout << "Amount of repitions." << endl;
-  cout << "$: ";
-  cin >> repeat;
+  // Arrays to hold values for printing.
+  int stepsTable [8][5];
+  float timeTable [8][5];
 
-  cout << endl << endl;
-  cout << "Method." << endl;
-  cout << "1) Insertion." << endl;
-  cout << "2) Selection." << endl;
-  cout << "3) Bubble." << endl;
-  cout << "4) Merge." << endl;
-  cout << "5) Quick." << endl;
-  cout << "$: ";
-  cin >> method;
+  // Print width
+  int printW = 12;
 
-  for(int i = 0; i < repeat; i++) {
-    // If we're going to repeat this more than one time, for a random set. (For Task 2)
-    if (repeat > 1) {
-      // Randomize the set.
-      mySequence.random();
-    }
-    switch(method) {
-      case 1:
+  // Loop through rows.
+  for (int i = 0; i < 8; i++) {
+
+    // Determine amount of elements.
+    int n = getN (i);
+    sequence.initialize (n);
+
+    // Loop through columns
+    for (int j = 0; j < 5; j++) {
+
+      // Initialize time and steps for this column.
+      steps = 0;
+      time = 0;
+
+      // Iterate based on how many repitions.
+      for (int r = 0; r < repeat; r++) {
+
+        // Pre-order sequence.
+        switch (order) {
+          case 0:
+            sequence.ascend();
+            break;
+          case 1:
+            sequence.descend();
+            break;
+          case 2:
+            sequence.random();
+            break;
+          default:
+            sequence.random();
+            break;
+        }
+
+        // Get start time.
         time1 = clock();
-        mySort.insertion(mySequence.getArray(), mySequence.getLength(), repeat, steps);
+
+        // Run a test based on column.
+        switch (j) {
+          case 0:
+            sort.insertion(sequence.getArray(), sequence.getLength(), steps);
+            break;
+          case 1:
+            sort.selection(sequence.getArray(), sequence.getLength(), steps);
+            break;
+          case 2:
+            sort.bubble(sequence.getArray(), sequence.getLength(), steps);
+            break;
+          case 3:
+            sort.merge(sequence.getArray(), sequence.getLength(), steps);
+            break;
+          case 4:
+            sort.quick(sequence.getArray(), 0, sequence.getLength() - 1, steps);
+            break;
+          default:
+            break;
+        }
+
+        // Get end time.
         time2 = clock();
+
+        // Calculate time elapsed.
+        timeD = time2 - time1;
+        time += (float) timeD / CLOCKS_PER_SEC;
+
+      }
+
+      // Add value to table.
+      stepsTable [i][j] = steps;
+      timeTable [i][j] = time;
+
+    }
+  }
+
+  // Print step table headers. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  cout << "Steps (Assignments, swaps, and comparions)" << endl;
+  cout << left << setw(printW) << "." << "\t";
+  for (int i = 0; i < 5; i++) {
+    switch (i) {
+      case 0:
+        cout << left << setw(printW) << "insertion" << "\t";
+        break;
+      case 1:
+        cout << left << setw(printW) << "selection" << "\t";
         break;
       case 2:
-        time1 = clock();
-        mySort.selection(mySequence.getArray(), mySequence.getLength(), repeat, steps);
-        time2 = clock();
+        cout << left << setw(printW) << "bubble" << "\t";
         break;
       case 3:
-        time1 = clock();
-        mySort.bubble(mySequence.getArray(), mySequence.getLength(), repeat, steps);
-        time2 = clock();
+        cout << left << setw(printW) << "merge" << "\t";
         break;
       case 4:
-        time1 = clock();
-        mySort.merge(mySequence.getArray(), mySequence.getLength(), repeat, steps);
-        time2 = clock();
-        break;
-      case 5:
-        time1 = clock();
-        mySort.quick(mySequence.getArray(), 0, mySequence.getLength()-1, repeat, steps);
-        time2 = clock();
+        cout << left << setw(printW) << "quick" << "\t";
         break;
     }
-    timeD = time2 - time1;
-    time += (float) timeD / CLOCKS_PER_SEC;
-  }
-  cout << "Repitions: " << repeat << endl;
-  cout << "Total Time: " << fixed << time << " seconds." << endl;
-  cout << "Total Steps: " << steps << endl;
-  cout << "Average Time: " << fixed << time/repeat << " seconds." << endl;
-  cout << "Average Steps: " << steps/repeat << endl;
-}
-
-void printArray (int * a, int n) {
-  cout << "Array: ";
-  for (int i = 0; i < n; i++) {
-    cout << * (a + i) << " ";
   }
   cout << endl;
+
+  // Print  step table values. Loop through rows.
+  for (int i = 0; i < 8; i++) {
+    // Get row info.
+    int n = getN (i);
+    // Print row info.
+    cout << left << setw(printW) << n << "\t";
+    // Loop through columns.
+    for (int j = 0; j < 5; j++) {
+      cout << left << setw(printW) << stepsTable [i][j] << "\t";
+    }
+    // End of row.
+    cout << endl;
+  }
+
+  // End of step table.
+  cout << endl << endl;
+
+  // Print time table headers. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  cout << "Time in seconds." << endl;
+  cout << left << setw(printW) << "." << "\t";
+  for (int i = 0; i < 5; i++) {
+    switch (i) {
+      case 0:
+        cout << left << setw(printW) << "insertion" << "\t";
+        break;
+      case 1:
+        cout << left << setw(printW) << "selection" << "\t";
+        break;
+      case 2:
+        cout << left << setw(printW) << "bubble" << "\t";
+        break;
+      case 3:
+        cout << left << setw(printW) << "merge" << "\t";
+        break;
+      case 4:
+        cout << left << setw(printW) << "quick" << "\t";
+        break;
+    }
+  }
+  cout << endl;
+
+  // Print  time table values. Loop through rows.
+  for (int i = 0; i < 8; i++) {
+    // Get row info.
+    int n = getN (i);
+    // Print row info.
+    cout << left << setw(printW) << n << "\t";
+    // Loop through columns.
+    for (int j = 0; j < 5; j++) {
+      cout << left << setw(printW) << fixed << timeTable [i][j] << "\t";
+    }
+    // End of row.
+    cout << endl;
+  }
+
+  // End of step table.
+  cout << endl << endl;
 }
 
-void setSequence (Sequence & mySequence) {
-  cout << endl << endl;
-  int input;
-  cout << "Number of elements to be used." << endl;
-  cout << "$: ";
-  cin >> input;
-  mySequence.initialize(input);
-  return;
-}
-
-void setPreorder (Sequence & mySequence) {
-  cout << endl << endl;
-  cout << "Pre order of array." << endl;
-  int input;
-  cout << "1) Sorted." << endl;
-  cout << "2) Reverse." << endl;
-  cout << "3) Random." << endl;
-  cout << "$: ";
-  cin >> input;
-  switch(input) {
+int getN (int row) {
+  switch (row) {
+    case 0:
+      return 100;
+      break;
     case 1:
-      mySequence.ascend();
+      return 200;
       break;
     case 2:
-      mySequence.descend();
+      return 300;
       break;
     case 3:
-      mySequence.random();
+      return 400;
       break;
-    default:
-      mySequence.random();
+    case 4:
+      return 500;
+      break;
+    case 5:
+      return 1000;
+      break;
+    case 6:
+      return 2000;
+      break;
+    case 7:
+      return 4000;
       break;
   }
-  return;
 }
